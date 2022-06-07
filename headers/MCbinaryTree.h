@@ -18,7 +18,11 @@ namespace mctl{
 			class const_MCiterator{
 				public:
 					const_MCiterator();
-					const_MCiterator(Node*);
+					const_MCiterator(Node*, Node*);
+					const_MCiterator(const const_MCiterator&);
+					const_MCiterator(const_MCiterator&&);
+					const_MCiterator& operator=(const const_MCiterator&);
+					const_MCiterator& operator=(const_MCiterator&&);
 					
 					const T& operator*()const;
 					const_MCiterator& operator++();
@@ -31,6 +35,7 @@ namespace mctl{
 				
 				protected:
 					Node* current;
+					Node* tree;
 					
 					friend class MCbinaryTree<T>;
 					T& retrieve()const{return data->value;)
@@ -39,8 +44,12 @@ namespace mctl{
 			class MCiterator : public const_MCiterator{
 				public:
 					MCiterator();
-					MCiterator(Node*);
-					
+					MCiterator(Node*, Node*);
+					MCiterator(const MCiterator&);
+					MCiterator(MCiterator&&);
+					MCiterator& operator=(const MCiterator&);
+					MCiterator& operator=(MCiterator&&);
+		
 					const T& operator*()const;
 					MCiterator& operator++();
 					MCiterator  operator++(int);
@@ -58,6 +67,9 @@ namespace mctl{
 				MCbinaryTree<T>& operator=(MCbinaryTree<T>&&);
 				~MCbinaryTree();
 				
+				void push(const T&);
+				void remove(const T&);
+				bool search(const T&)const;
 				
 				MCiterator& begin()const;
 				MCiterator& end() const;
@@ -68,6 +80,9 @@ namespace mctl{
 		private:
 			Node* root;
 			unsigned int size;
+			
+			Node* findMin()const;
+			Node* findMax()const;
 	};
 	
 };
