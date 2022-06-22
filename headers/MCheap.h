@@ -10,7 +10,6 @@ namespace mctl{
 			min_MCheap& operator=(const MCvector<int>& h);
 			min_MCheap(MCvector<int>&& h);
 			min_MCheap& operator=(MCvector<int>&& h);
-			
 			bool empty()const;
 			void push(int val);
 			void pop();
@@ -21,13 +20,12 @@ namespace mctl{
 			MCvector<int> heap;
 			unsigned int size;
 			
-			virtual void heap();
+			virtual void makeHeap();
 			virtual void heapify(int i);
 			int getParent(int i)const;
 			int getFirstChild(int i)const;
 	};
 	
-	template <typename T>
 	class max_MCheap : public min_MCheap{
 		public:
 			max_MCheap();
@@ -35,9 +33,8 @@ namespace mctl{
 			max_MCheap& operator=(const MCvector<int>& h);
 			max_MCheap(MCvector<int>&& h);
 			max_MCheap& operator=(MCvector<int>&& h);
-		
 		private:
-			void heap();
+			void makeHeap();
 			void heapify(int i);
 	};
 };

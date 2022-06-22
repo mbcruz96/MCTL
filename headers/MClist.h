@@ -9,34 +9,39 @@ namespace mctl{
 				T* value;
 				Node* prev;
 				Node* next;
-				Node():  value(nullptr), prev(nullptr), next(nullptr){}
-				Node(T* d, Node* p, Node* n): value(d), prev(p), next(n){}
+				//Node():  value(NULL), prev(nullptr), next(nullptr){}
+				Node(T* value, Node* p, Node* n): value(d), prev(p), next(n){}
 			};
 			
 			class const_MCiterator{
 				public:
 					const_MCiterator();
-					~const_MCiterator();
-					const T& operator*()const;
+					const_MCiterator(Node*);
+					const_MCiterator(const const_MCiterator&);
+					const_MCiterator(const_MCiterator&&);
+					const T operator*()const;
 					
 					const_MCiterator& operator++();
 					const_MCiterator  operator++(int);
 					const_MCiterator& operator--();
 					const_MCiterator  operator--(int);
 					
-					bool operator==(const const_MCiterator& rhs);
-					bool operator!=(const const_MCiterator& rhs);
+					bool operator==(const const_MCiterator& rhs)const;
+					bool operator!=(const const_MCiterator& rhs)const;
 				protected:
 					Node* data;
 					
 					friend class MClist<T>;
-					T& retrieve(){return data->value;}
+					T retrieve()const{return data->value;}
 			};
 			
 			class MCiterator : public const_MCiterator{
 				public:
 					MCiterator();
-					T& operator*()const;
+					MCiterator(Node*);
+					MCiterator(const MCiterator&);
+					MCiterator(MCiterator&&);
+					T operator*()const;
 					
 					MCiterator& operator++();
 					MCiterator  operator++(int);
@@ -47,28 +52,28 @@ namespace mctl{
 			};
 			
 			MClist();
+			MClist(const MClist<T>&);
+			MClist(MClist<T>&& l);
 			MClist<T>& operator=(const MClist<T>& l);
+			MClist<T>& operator=(MClist<T>&& l);
 			~MClist();
 			
 			MClist(T val, int copies);
 			
-			MClist(MClist<T>&& l);
-			MClist<T>& operator=(MClist<T>&& l);
-			
 			// added push_front and pop_front
 			void push_back(T val);
 			void push_front(T val);
-			void pop_back();
-			void pop_front();
+			Node* pop_back();
+			Node* pop_front();
 			
 			// didn't include cbegin and cend 
-			MCiterator begin();
-			MCiterator end();
+			MCiterator begin()const;
+			MCiterator end()const;
 			
 			// didn't include insert with copies parameter
 			MCiterator insert(MCiterator it, T val);
-			void print();
-			unsigned int getSize();
+			void print()const;
+			unsigned int getSize()const;
 			
 			
 		private:

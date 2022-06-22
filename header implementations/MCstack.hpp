@@ -5,7 +5,6 @@
 namespace mctl{
 template <typename T>
 MCstack<T>::MCstack(){
-	vec = new MCvector<T>();
 	size = 0;
 }
 template <typename T>
@@ -15,16 +14,9 @@ MCstack<T>::MCstack(const MCstack<T>& st){
 		vec.push(*itr);
 		++itr;
 	};
+	vec.push(*itr);
 }
-
-template <typename T>
-MCstack<T>::~MCstack(){
-	while (size > 0){
-		vec.pop();
-	}
-	delete vec;
-}
-			
+		
 template <typename T>
 MCstack<T>& MCstack<T>::operator=(const MCstack<T>& st){
 	if (size > 0){
@@ -57,7 +49,7 @@ MCstack<T>& MCstack<T>::operator=(MCstack<T>&& st){
 			
 template <typename T>
 void MCstack<T>::push(T val){
-	vec.push_back(T);
+	vec.push_back(val);
 	size++;
 }
 template <typename T>

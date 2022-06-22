@@ -19,9 +19,9 @@ namespace mctl{
 			T& back()const;
 			
 			void print()const;
-			void getSize()const;
+			unsigned int getSize()const;
 		private:
-			MClist queue;
+			MClist<T> queue;
 			unsigned int size;
 	};
 };
