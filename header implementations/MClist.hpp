@@ -147,13 +147,9 @@ MClist<T>& MClist<T>::operator=(const MClist<T>& l){
 }
 template <typename T>
 MClist<T>::~MClist(){
-	while (size > 0){
-		while(pop_back()){
-			continue;
-		};
-		delete head;
-		delete tail;		
-	};
+	empty();
+	delete head;
+	delete tail;		
 }
 
 template <typename T>			
@@ -191,26 +187,34 @@ MClist<T>& MClist<T>::operator=(MClist<T>&& l){
 }
 			
 template <typename T>			
-void MClist<T>::push_back(T val){
+typename MClist<T>::MCiterator MClist<T>::push_back(T val){
 	if (size > 0){
 		Node* node = new Node(val, tail->prev, tail);
 		tail->prev->next = node;
 		tail->prev = node;
+		++size;
+		return MCiterator(node);
 	}
-	else
+	else{
 		head->next = tail->prev = new Node(val, head, tail);
-	++size;
+		++size;
+		return begin();
+	}
 }
 template <typename T>
-void MClist<T>::push_front(T val){
+typename MClist<T>::MCiterator MClist<T>::push_front(T val){
 	if (size > 0){
 		Node* node = new Node(val, head, head->next);
 		head->next->prev = node;
 		head->next = node;
+		++size;
+		return MCiterator(node);
 	}
-	else
+	else{
 		tail->prev = head->next = new Node(val, head, tail);
-	++size;
+		++size;
+		return begin();
+	}
 }
 template <typename T>
 bool MClist<T>::pop_back(){
@@ -266,7 +270,27 @@ typename MClist<T>::MCiterator MClist<T>::end()const{
 }
 
 template <typename T>			
-typename MClist<T>::MCiterator MClist<T>::insert(MCiterator it, T val){}
+typename MClist<T>::MCiterator MClist<T>::insert(MCiterator it, T val){
+	if (size > 0 && it != head && it != tail){
+		Node* temp = it.data;
+		Node* node = new Node(val, temp->prev, temp);
+		temp->prev->next = node;
+		temp->prev = node;
+		++size;
+		return MCiterator(node);
+	}
+	else if(it == head){
+		auto itr = push_front(val);
+		++size;
+		return itr;
+	}
+	else{ 
+		auto itr = push_back(val);
+		++size;
+		return itr;
+	}
+
+}
 template <typename T>
 void MClist<T>::print()const{
 	if (size > 0){
@@ -277,9 +301,20 @@ void MClist<T>::print()const{
 		};
 		std::cout << '\n';
 	}
+	else 
+		std::cout << "Empty list\n";
 }
 template <typename T>
 unsigned int MClist<T>::getSize()const{
 	return size;
+}
+
+template <typename T>
+void MClist<T>::empty(){
+	while (size > 0){
+		while(pop_back()){
+			continue;
+		};
+	};
 }
 };
