@@ -6,11 +6,12 @@ namespace mctl{
 	class MClist{
 		public:
 			struct Node{
-				T* value;
+				T value;
 				Node* prev;
 				Node* next;
-				//Node():  value(NULL), prev(nullptr), next(nullptr){}
-				Node(T* value, Node* p, Node* n): value(d), prev(p), next(n){}
+				Node():  value(), prev(nullptr), next(nullptr){}
+				Node(const Node& n): value(n.value), prev(n.prev), next(n.next){}
+				Node(T v, Node* p, Node* n): value(v), prev(p), next(n){}
 			};
 			
 			class const_MCiterator{
@@ -63,8 +64,8 @@ namespace mctl{
 			// added push_front and pop_front
 			void push_back(T val);
 			void push_front(T val);
-			Node* pop_back();
-			Node* pop_front();
+			bool pop_back();
+			bool pop_front();
 			
 			// didn't include cbegin and cend 
 			MCiterator begin()const;
