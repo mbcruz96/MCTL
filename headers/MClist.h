@@ -62,8 +62,8 @@ namespace mctl{
 			MClist(T val, int copies);
 			
 			// added push_front and pop_front
-			void push_back(T val);
-			void push_front(T val);
+			MCiterator push_back(T val);
+			MCiterator push_front(T val);
 			bool pop_back();
 			bool pop_front();
 			
@@ -75,6 +75,7 @@ namespace mctl{
 			MCiterator insert(MCiterator it, T val);
 			void print()const;
 			unsigned int getSize()const;
+			void empty();
 			
 			
 		private:
