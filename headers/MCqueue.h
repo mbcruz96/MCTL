@@ -14,9 +14,10 @@ namespace mctl{
 			
 			void push(const T& val);
 			void pop();
-			bool empty()const;
-			T& front()const;
-			T& back()const;
+			bool isEmpty()const;
+			T front()const;
+			T back()const;
+			void empty();
 			
 			void print()const;
 			unsigned int getSize()const;
