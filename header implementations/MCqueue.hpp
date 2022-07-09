@@ -58,19 +58,22 @@ void MCqueue<T>::pop(){
 	size--;
 }
 template <typename T>
-bool MCqueue<T>::empty()const{
+bool MCqueue<T>::isEmpty()const{
 	if (size == 0)
 		return true;
 	else 
 		return false;
 }
+// *** problem when the queue is empty
 template <typename T>
-T& MCqueue<T>::front()const{
+T MCqueue<T>::front()const{
 	auto itr = queue.begin();
+	T temp = *itr;
 	return (*itr);
 }
+// *** problem when the queue is empty
 template <typename T>
-T& MCqueue<T>::back()const{
+T MCqueue<T>::back()const{
 	auto itr = queue.end();
 	--itr;
 	return (*itr);
@@ -78,11 +81,6 @@ T& MCqueue<T>::back()const{
 
 template <typename T>	
 void MCqueue<T>::print()const{
-	/*auto itr = queue.begin();
-	while (itr != queue.end()){
-		std::cout << *itr << " ";
-		itr++;
-	};*/
 	queue.print();
 }
 template <typename T>
@@ -90,4 +88,8 @@ unsigned int MCqueue<T>::getSize()const{
 	return size;
 }
 
+template <typename T>
+void MCqueue<T>::empty(){
+	queue.empty();
+}
 };
