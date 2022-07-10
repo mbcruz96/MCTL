@@ -5,9 +5,6 @@
 namespace mctl{
 	template <typename T>
 	class MCvector{
-		/*template <class F>
-		friend std::ostream& operator<<(std::ostream& os, const MCvector<F>& vec);
-		*/
 		public:
 			class const_MCiterator{
 				public:
@@ -28,13 +25,13 @@ namespace mctl{
 					
 					
 				protected:
-					T* data;		// pointer to the data item
+					T* data;		// pointer to the vector
 					unsigned int index;		// for index
 					unsigned int vecSize;
 					
 					friend class MCvector<T>;
 					T& retrieve(){return data[index];}
-					const_MCiterator(unsigned int,unsigned int,T*);
+					const_MCiterator(unsigned int, unsigned int, T*);
 			};
 			
 			class MCiterator : public const_MCiterator{
@@ -44,15 +41,14 @@ namespace mctl{
 					MCiterator(MCiterator&&);
 					MCiterator& operator=(const MCiterator&);
 					MCiterator& operator=(MCiterator&&);
-					T& operator*();
-					const T& operator*()const;
+					T operator*();
 					
 					MCiterator& operator++();
 					MCiterator operator++(int);
 					MCiterator& operator--();
 					MCiterator operator--(int);
 					
-					MCiterator(unsigned int,unsigned int,T*);
+					MCiterator(unsigned int, unsigned int, T*);
 					
 				protected:
 					friend class MCvector<T>;
@@ -61,28 +57,31 @@ namespace mctl{
 			
 		
 			MCvector();
+			MCvector(const MCvector&);
+			MCvector(MCvector<T>&&);
 			MCvector<T>& operator=(const MCvector<T>&);
+			MCvector<T>& operator=(MCvector<T> &&);
 			~MCvector();
 			
 			MCvector(const T&, int);
 			MCvector(int size);
 			
-			
-			MCvector(MCvector<T>&&);
-			MCvector<T>& operator=(MCvector<T> &&);
-			T& operator[](int val);
+			T operator[](int val);
 			void push_back(const T&);
 			void pop_back();
 			
 			MCiterator begin()const;
-			const MCiterator cbegin();
+			const MCiterator cbegin()const;
 			MCiterator end()const;
-			const MCiterator cend();
+			const MCiterator cend()const;
 			
 			MCiterator insert(MCiterator, const T&);
-			MCiterator insert(MCiterator, unsigned int, const T&);
 			void print()const;
 			unsigned int getSize()const;
+			bool isEmpty()const;
+			
+			template <typename U>
+			friend std::ostream& operator<<(std::ostream&, const MCvector<U>&);
 		private:
 			T* mcVec;
 			unsigned int capacity;
