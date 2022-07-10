@@ -1,5 +1,6 @@
 #ifndef MCLIST_H
 #define MCLIST_H 
+#include<iostream>
 
 namespace mctl{
 	template<typename T>
@@ -76,8 +77,10 @@ namespace mctl{
 			void print()const;
 			unsigned int getSize()const;
 			void empty();
+			bool isEmpty()const;
 			
-			
+			template <typename U>
+			friend std::ostream& operator<<(std::ostream&, const MClist<U>&);
 		private:
 			Node* head;
 			Node* tail;
