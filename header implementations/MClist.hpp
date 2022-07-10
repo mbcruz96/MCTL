@@ -317,4 +317,22 @@ void MClist<T>::empty(){
 		};
 	};
 }
+template <typename T>
+bool MClist<T>::isEmpty()const{
+	return (size == 0);
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const MClist<T>& list){
+	if (!list.isEmpty()){
+		auto itr = list.begin();
+		while (itr != list.end()){
+			out << *itr << " ";
+			++itr;
+		};
+		out << '\n';
+	}
+	else 
+		out << "Empty list\n";
+}
 };
