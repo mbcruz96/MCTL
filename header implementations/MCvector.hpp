@@ -7,34 +7,40 @@ template <typename T>
 MCvector<T>::const_MCiterator::const_MCiterator(){
 	data = nullptr;
 	index = -1;
+	vecSize = 0;
 }
 template <typename T>
 MCvector<T>::const_MCiterator::const_MCiterator(const const_MCiterator& it){
 	data = it.data;
 	index = it.index;
+	vecSize = it.vecSize;
 }
 template <typename T>
 MCvector<T>::const_MCiterator::const_MCiterator(const_MCiterator&& it){
 	data = std::move(it.data);
-	data = std::move(it.index);
+	index = std::move(it.index);
+	vecSize = std::move(it.vecSize);
 }
 template <typename T>
 typename MCvector<T>::const_MCiterator& MCvector<T>::const_MCiterator::operator=(const const_MCiterator& it){
 	data = it.data;
 	index = it.index;
+	vecSize = it.vecSize;
 	return *this;
 }
 template <typename T>
 typename MCvector<T>::const_MCiterator& MCvector<T>::const_MCiterator::operator=(const_MCiterator&& it){
 	data = std::move(it.data);
 	index = std::move(it.index);
+	vecSize = std::move(it.vecSize);
 	return *this;
 }
 
 template <typename T>
-MCvector<T>::const_MCiterator::const_MCiterator(unsigned int in,T* val){
+MCvector<T>::const_MCiterator::const_MCiterator(unsigned int in, unsigned int s, T* val){
 	data = val;
 	index = in;
+	vecSize = s;
 }
 
 template <typename T>
@@ -45,55 +51,60 @@ const T & MCvector<T>::const_MCiterator::operator*() const{
 
 template <typename T>
 typename MCvector<T>::const_MCiterator & MCvector<T>::const_MCiterator::operator++(){
-	if (index < (size -1)){
+	if (index < (vecSize -1)){
 		index += 1;
 		return (*this);
 	}
 	else {
-		auto itr = const_MCiterator();
-		return itr;
+		data = nullptr;
+		index = -1;
+		vecSize = 0;
+		return (*this);
 	}
 			
 }
 template <typename T>
 typename MCvector<T>::const_MCiterator MCvector<T>::const_MCiterator::operator++(int){
-	if (index < MCvector<T>::size){
-		const_MCiterator old = *this;
+	const_MCiterator old = *this;
+	if (index < (vecSize - 1)){
 		index += 1;
-		return old;
 	}
 	else {
-		auto itr = const_MCiterator();
-		return itr;
+		index = -1;
+		data = nullptr;
+		vecSize = 0;
 	}
+	return old;
 }
 template <typename T>
 typename MCvector<T>::const_MCiterator & MCvector<T>::const_MCiterator::operator--(){
 	if (index > 0){
 		index -= 1;
-		return (*this);
 	}
 	else {
-		auto itr = const_MCiterator();
-		return itr;
+		index = -1;
+		data = nullptr;
+		vecSize = 0;
 	}
+	return (*this);
 }
 template <typename T>
 typename MCvector<T>::const_MCiterator MCvector<T>::const_MCiterator::operator--(int){
-	if (MCvector<T>::index > 0){
-		const_MCiterator old = *this;
+	const_MCiterator old = *this;
+	if (index > 0){
 		index -= 1;
-		return old;
 	}
 	else {
-		auto itr = const_MCiterator();
-		return itr;
+		index = -1;
+		data = nullptr;
+		vecSize = 0;
 	}
+	return (*this);
 }
 	
 template <typename T>
 bool MCvector<T>::const_MCiterator::operator==(const const_MCiterator& rhs){
-	return (data == rhs.data);
+	return (*data == rhs->data && index == rhs.index);
 }
 template <typename T>
 bool MCvector<T>::const_MCiterator::operator!=(const const_MCiterator& rhs){
@@ -106,81 +117,84 @@ template <typename T>
 MCvector<T>::MCiterator::MCiterator(): const_MCiterator{}
 {}
 template <typename T>
-MCvector<T>::MCiterator::MCiterator(const MCiterator& it): const_MCiterator{it.index, it.data}{}
+MCvector<T>::MCiterator::MCiterator(const MCiterator& it): const_MCiterator{it}{}
 template <typename T>
-MCvector<T>::MCiterator::MCiterator(MCiterator&& it): const_MCiterator{std::move(it.index), std::move(it.data)}{}
+MCvector<T>::MCiterator::MCiterator(MCiterator&& it): const_MCiterator{std::move(it)}{}
 template <typename T>
 typename MCvector<T>::MCiterator& MCvector<T>::MCiterator::operator=(const MCiterator& it){
 	const_MCiterator::data = it.data;
 	const_MCiterator::index = it.index;
+	const_MCiterator::vecSize = it.vecSize;
 	return *this;
 }
 template <typename T>
 typename MCvector<T>::MCiterator& MCvector<T>::MCiterator::operator=(MCiterator&& it){
-	const_MCiterator::data = it.data;
-	const_MCiterator::index = it.index;
+	const_MCiterator::data = std::move(it.data);
+	const_MCiterator::index = std::move(it.index);
+	const_MCiterator::vecSize = std::move(it.vecSize);
 	return *this;
 }
 
 template <typename T>
-MCvector<T>::MCiterator::MCiterator(unsigned int in,T* val): const_MCiterator{in, val}
+MCvector<T>::MCiterator::MCiterator(unsigned int in, unsigned int s, T* val): const_MCiterator{in, s, val}
 {}
 
 template <typename T>
-T & MCvector<T>::MCiterator::operator*(){
-	return const_MCiterator::retrieve();
-}
-template <typename T>
-const T & MCvector<T>::MCiterator::operator*()const{
+T MCvector<T>::MCiterator::operator*(){
 	return const_MCiterator::retrieve();
 }
 
+
 template <typename T>			
 typename MCvector<T>::MCiterator & MCvector<T>::MCiterator::operator++(){
-	if (MCvector<T>::index < (size -1)){
+	if (const_MCiterator::index < (const_MCiterator::vecSize -1)){
 		const_MCiterator::index += 1;
-		const_MCiterator::data = mcVec[MCvector<T>::index];
 		return (*this);
 	}
 	else {
-		auto itr = MCiterator();
-		return itr;
+		const_MCiterator::index = -1;
+		const_MCiterator::data = nullptr;
+		const_MCiterator::vecSize = 0;
 	}
 }
 template <typename T>
 typename MCvector<T>::MCiterator MCvector<T>::MCiterator::operator++(int){
-	if (MCvector<T>::index < (size - 1)){
-		const_MCiterator old = *this;
+	MCiterator old = *this;
+	if (MCvector<T>::index < (const_MCiterator::vecSize - 1)){
 		const_MCiterator::index += 1;	
-		return old;
+
 	}
 	else {
-		auto itr = MCiterator();
-		return itr;
+		const_MCiterator::index = -1;
+		const_MCiterator::data = nullptr;	
+		const_MCiterator::vecSize = 0;
 	}
+	return old;
 }
 template <typename T>
 typename MCvector<T>::MCiterator & MCvector<T>::MCiterator::operator--(){
 	if (const_MCiterator::index > 0){
 		const_MCiterator::index -= 1;
-		return (*this);
 	}
 	else {
-		auto itr = MCiterator();
-		return itr;
+		const_MCiterator::index = -1;
+		const_MCiterator::data = nullptr;
+		const_MCiterator::vecSize = 0;
 	}
+	return (*this);
 }
 template <typename T>
 typename MCvector<T>::MCiterator MCvector<T>::MCiterator::operator--(int){
+	MCiterator old = *this;
 	if (const_MCiterator::index > 0){
-		const_MCiterator old = *this;
 		const_MCiterator::index -= 1;
-		return old;
 	}
 	else {
-		auto itr = MCiterator();
-		return itr;
+		const_MCiterator::index = -1;
+		const_MCiterator::data = nullptr;
+		const_MCiterator::vecSize = 0;
 	}
+	return (*this);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -238,7 +252,7 @@ MCvector<T> & MCvector<T>::operator=(MCvector<T> && v){
 	return *this;
 }
 template <typename T>
-T& MCvector<T>::operator[](int index){
+T MCvector<T>::operator[](int index){
 	return mcVec[index];
 }
 /*
@@ -271,20 +285,18 @@ typename MCvector<T>::MCiterator MCvector<T>::insert(MCiterator it, const T& val
 		for (int i = it.index + 1; i < getSize(); i++)
 			std::swap(temp, mcVec[i]);	
 		push_back(temp);
-		return MCiterator(it.index, val);
+		return MCiterator(it.index, size, val);
 	}
 	else 
 		return MCiterator();
 }
-template <typename T>
-typename MCvector<T>::MCiterator MCvector<T>::insert(MCiterator it, unsigned int index, const T& val){}
 
 
 // VECTOR ITERATOR FUNCTIONS
 template <typename T>
 typename MCvector<T>::MCiterator MCvector<T>::begin()const{
 	if (size > 0){
-		return MCiterator(0, mcVec);
+		return MCiterator(0, size, mcVec);
 	} 
 	else 
 		return MCiterator();
@@ -293,10 +305,7 @@ typename MCvector<T>::MCiterator MCvector<T>::begin()const{
 // returns the value of the last element
 template <typename T>
 typename MCvector<T>::MCiterator MCvector<T>::end()const{
-	if (size > 0)
-		return MCiterator(size - 1, mcVec);
-	else 
-		return MCiterator();
+	return MCiterator();
 }
 
 /*
@@ -317,7 +326,7 @@ const typename MCvector<T>::MCiterator MCvector<T>::cend(){
 */
 // UTILITY FUNCTIONS
 template <typename T>
-void MCvector<T>::print(){
+void MCvector<T>::print()const{
 	for (int i = 0; i < size; i++){
 		std::cout << mcVec[i] << " ";
 	}
@@ -325,7 +334,7 @@ void MCvector<T>::print(){
 }
 
 template <typename T>
-unsigned int MCvector<T>::getSize(){
+unsigned int MCvector<T>::getSize()const{
 	return size;
 }
 
@@ -341,5 +350,22 @@ void MCvector<T>::resize(){
 		mcVec = newVec;
 	}
 }
-	
+template <typename T>
+bool MCvector<T>::isEmpty()const{
+	return (size == 0);
+}
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const MCvector<T>& vector){
+	if (!vector.isEmpty()){
+		//for (int i = 0; i < vector.getSize(); i++){
+		auto itr = vector.begin();
+		while (itr != vector.end()){
+			out << *itr << " ";
+			++itr;
+		};
+		out << '\n';
+	}
+	else 
+		out << "Empty vector\n";
+}	
 };
